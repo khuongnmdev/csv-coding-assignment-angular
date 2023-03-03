@@ -1,11 +1,11 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { TaskDetailComponent } from "./task-detail/task-detail.component";
 import { TaskListComponent } from "./task-list/task-list.component";
+import { TaskDetailComponent, TASK_ID_PARAM_KEY } from "./task-detail/task-detail.component";
 
 export const routes: Routes = [
   { path: '', component: TaskListComponent },
-  { path: 'detail/:id', component: TaskDetailComponent },
+  { path: `detail/:${TASK_ID_PARAM_KEY}`, component: TaskDetailComponent },
   { path: '**', redirectTo: '' },
 ];
 
@@ -13,4 +13,4 @@ export const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

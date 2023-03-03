@@ -1,11 +1,8 @@
-<p>
-  task-list works!
-</p>
-
-<h2>Tasks</h2>
+<h1>Task List</h1>
 
 <ul>
-  <li *ngFor="let t of tasks|async">
-    Task: {{t.id}}, {{t.description}}
+  <li *ngFor="let t of tasks | async">
+    <a routerLink="detail/{{ t.id }}">Task: {{ t.id }}</a>
+    {{ t.description }}
   </li>
 </ul>

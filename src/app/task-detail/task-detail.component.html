@@ -1,3 +1,22 @@
-<p>
-  task-detail works!
-</p>
+<h1>Task Detail</h1>
+<a routerLink="/">Go to Task List</a>
+
+<ng-container *ngIf="task$ | async as task; else notFoundTask">
+  <div>
+    <h2>Task Id: {{ task.id }}</h2>
+    <p>{{ task.description }}</p>
+    Assignee:
+    <ng-container *ngIf="user$ | async as user; else notFoundUser">
+      <span>{{ user.name }}</span>
+    </ng-container>
+
+    <p>Status: {{ task.completed ? "Done" : "Incomplete" }}</p>
+  </div>
+</ng-container>
+
+<ng-template #notFoundTask>
+  <p>This task is not existed.</p>
+</ng-template>
+<ng-template #notFoundUser>
+  <span>Not assign yet.</span>
+</ng-template>
