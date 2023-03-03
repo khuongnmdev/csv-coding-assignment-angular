@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {BackendService} from './backend.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,7 @@ import {BackendService} from './backend.service';
 export class AppComponent {
   tasks = this.backend.tasks();
   users = this.backend.users();
+
 
   constructor(private backend: BackendService) {}
 }
