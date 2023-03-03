@@ -1,8 +1,17 @@
 <h2>Task List</h2>
 
 <ul>
-  <li *ngFor="let t of tasks | async">
+  <li *ngFor="let t of tasks$ | async as tasks">
     <a routerLink="detail/{{ t.id }}">Task: {{ t.id }}</a>
     {{ t.description }}
   </li>
 </ul>
+
+<form (submit)="addNewTask()">
+  <h3>New Task</h3>
+  <label for="">
+    <span>Description: </span>
+    <input type="text" [(ngModel)]="description" name="description" />
+  </label>
+  <button type="submit">Add new task</button>
+</form>
