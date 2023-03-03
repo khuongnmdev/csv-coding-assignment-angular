@@ -1,28 +1,50 @@
-/* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
+import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from "@angular/router/testing";
+import { BehaviorSubject } from 'rxjs';
+import { BackendService } from '../backend.service';
 import { TaskDetailComponent } from './task-detail.component';
 
 describe('TaskDetailComponent', () => {
   let component: TaskDetailComponent;
   let fixture: ComponentFixture<TaskDetailComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ TaskDetailComponent ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(TaskDetailComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  let route: ActivatedRoute;
+  const paramsSubject = new BehaviorSubject({
+    taskId1: 0,
+    taskId2: 111,
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [TaskDetailComponent],
+      imports: [RouterTestingModule],
+      providers: [
+        { provide: BackendService, useValue: new BackendService() },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            params: paramsSubject
+          },
+        },
+      ]
+    })
+      .compileComponents();
+
+    route = TestBed.inject(ActivatedRoute);
+  }));
+
+  it('should be zero', (done) => {
+    route.params.subscribe(params => {
+      expect(params.taskId1).toBe(0);
+      done();
+    });
+  });
+
+  it('should not be zero', (done) => {
+    route.params.subscribe(params => {
+      expect(params.taskId2).not.toBe(0);
+      done();
+    });
   });
 });

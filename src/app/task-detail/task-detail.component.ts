@@ -4,7 +4,7 @@ import { EMPTY, Observable, iif } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { shareReplay, switchMap, switchMapTo } from 'rxjs/operators';
 
-export const TASK_ID_PARAM_KEY = 'userId';
+export const TASK_ID_PARAM_KEY = 'taskId';
 
 @Component({
   selector: 'app-task-detail',
