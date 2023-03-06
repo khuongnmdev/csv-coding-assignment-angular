@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BackendService, Task, User } from '../backend.service';
 import { EMPTY, Observable, iif } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { map, shareReplay, switchMap, switchMapTo } from 'rxjs/operators';
+import { map, shareReplay, switchMap, switchMapTo, tap } from 'rxjs/operators';
 
 export const TASK_ID_PARAM_KEY = 'taskId';
 
@@ -16,6 +16,7 @@ export class TaskDetailComponent implements OnInit {
   /** User to display. */
   protected readonly task$: Observable<Task>;
   protected readonly user$: Observable<User>;
+  protected readonly userList$: Observable<User[]>;
 
   private taskId: number;
 
@@ -31,6 +32,11 @@ export class TaskDetailComponent implements OnInit {
     this.user$ = this.task$.pipe(switchMap(task => iif(() => task.assigneeId !== null,
       this.backend.user(Number(task.assigneeId),
       ))))
+
+    this.userList$ = this.backend.users().pipe(
+      tap((users) => console.log(users)),
+      shareReplay({ refCount: true, bufferSize: 1 }),
+    );
 
   }
 
@@ -51,4 +57,5 @@ export class TaskDetailComponent implements OnInit {
       // () => console.log('Assign success!');
     )
   }
+
 }

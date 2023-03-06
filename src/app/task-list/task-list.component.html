@@ -1,17 +1,20 @@
-<h2>Task List</h2>
+<h2 class="title">Task List</h2>
 
-<ul>
-  <li *ngFor="let t of tasks$ | async as tasks">
-    <a routerLink="detail/{{ t.id }}">Task: {{ t.id }}</a>
-    {{ t.description }}
-  </li>
-</ul>
+<section class="task-list">
+  <ng-container *ngFor="let task of tasks$ | async as tasks">
+    <mat-card class="task-list-item" routerLink="detail/{{ task.id }}">
+      <mat-card-title>Task {{ task.id }}</mat-card-title>
+      <mat-card-subtitle>{{ task.description }}</mat-card-subtitle>
+    </mat-card>
+  </ng-container>
+</section>
 
-<form (submit)="addNewTask()">
-  <h3>New Task</h3>
-  <label for="">
-    <span>Description: </span>
-    <input type="text" [(ngModel)]="description" name="description" />
-  </label>
-  <button type="submit">Add new task</button>
+
+<form (submit)="addNewTask()" class="form">
+  <h3 class="title">New Task</h3>
+  <mat-form-field appearance="fill">
+    <mat-label>Description</mat-label>
+    <input matInput type="text" [(ngModel)]="description" name="description" />
+  </mat-form-field>
+  <button type="submit" mat-raised-button color="warn">Add new task</button>
 </form>

@@ -1,0 +1,17 @@
+.task-list {
+  padding: 2rem;
+}
+.task-list-item {
+  cursor: pointer;
+}
+.task-list-item:not(:last-of-type) {
+  margin-bottom: 1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}

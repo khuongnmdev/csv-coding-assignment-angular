@@ -1,17 +1,46 @@
-<h2>Task Detail</h2>
+<h2 class="title">Task Detail</h2>
+
 <a routerLink="/">Go to Task List</a>
 
 <ng-container *ngIf="task$ | async as task; else notFoundTask">
-  <div>
+  <form (submit)="updateTask()" class="form">
     <h2>Task Id: {{ task.id }}</h2>
-    <p>{{ task.description }}</p>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Description</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="task.description"
+        name="description"
+      />
+    </mat-form-field>
+    <mat-form-field
+      appearance="fill"
+      *ngIf="user$ | async as user; else notFoundUser"
+    >
+      <mat-label>Assignee</mat-label>
+      <mat-select
+        [ngModel]="task.assignee"
+        name="assignee"
+        (ngModelChange)="(assignTask)"
+      >
+        <!-- <mat-option value="disabled">Option 1</mat-option> -->
+        <ng-container *ngIf="userList$ | async as userList">
+          <mat-option *ngFor="let user of userList" [value]="user.value">
+            {{ user.name }}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+
     Assignee:
     <ng-container *ngIf="user$ | async as user; else notFoundUser">
       <span>{{ user.name }}</span>
     </ng-container>
 
     <p>Status: {{ task.completed ? "Done" : "Incomplete" }}</p>
-  </div>
+  </form>
 </ng-container>
 
 <ng-template #notFoundTask>
