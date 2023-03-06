@@ -38,6 +38,12 @@ export class BackendService {
       description: "Move the desk to the new location",
       assigneeId: 111,
       completed: false
+    },
+    {
+      id: 2,
+      description: "Mock Data",
+      assigneeId: 222,
+      completed: false
     }
   ];
 

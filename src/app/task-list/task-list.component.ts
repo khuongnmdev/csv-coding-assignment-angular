@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { delay, finalize, repeatWhen, tap } from 'rxjs/operators';
-import { BackendService, Task } from '../backend.service';
+import { filter, finalize, map, repeatWhen, shareReplay, tap } from 'rxjs/operators';
+import { BackendService, Task, User } from '../backend.service';
 
 @Component({
   selector: 'app-task-list',
@@ -10,33 +10,56 @@ import { BackendService, Task } from '../backend.service';
 })
 export class TaskListComponent implements OnInit {
 
-  // tasks = this.backend.tasks();
-  users = this.backend.users();
-
   protected readonly tasks$: Observable<Task[]>;
 
-  protected readonly isLoading$ = new BehaviorSubject<boolean>(false);
+  protected readonly users$: Observable<User[]>;
 
   private readonly userUpdated$ = new Subject<void>();
+
+  protected filterValue: number;
 
   protected description: string;
 
   constructor(private backend: BackendService) {
     this.tasks$ = this.backend.tasks().pipe(
+      map(tasks => {
+        if (this.filterValue) {
+          return tasks.filter(task => task.assigneeId === this.filterValue)
+        } else {
+          return tasks;
+        }
+      }),
       repeatWhen(() => this.userUpdated$), // Deprecated operator
     )
+    this.users$ = this.backend.users();
   }
 
   ngOnInit() {
+    this.userUpdated$.next();
+  }
+
+  getAssigneeName(assigneeId: number) {
+    this.users$.pipe(
+      map(users => {
+        users.find(u => u.id === assigneeId)
+      })
+    )
   }
 
   protected addNewTask() {
     this.backend.newTask({ description: this.description }).pipe(
-      tap(() => this.isLoading$.next(true)),
-      finalize(() => this.isLoading$.next(false)),
     ).subscribe((value) => {
       this.userUpdated$.next(); // trigger reload list
       this.description = ''; // clear input
     })
+  }
+
+  protected trackByFunction(index: number, task: Task) {
+    return task.id;
+  }
+
+  protected filterChange(userId: number) {
+    this.filterValue = userId;
+    this.userUpdated$.next(); // trigger reload list
   }
 }

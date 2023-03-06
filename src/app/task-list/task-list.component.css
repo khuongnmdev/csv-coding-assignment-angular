@@ -1,6 +1,12 @@
-.task-list {
+:host {
+  display: block;
   padding: 2rem;
 }
+
+.task-list {
+  margin-bottom: 2rem;
+}
+
 .task-list-item {
   cursor: pointer;
 }
@@ -8,10 +14,10 @@
   margin-bottom: 1rem;
 }
 
-.form {
-  display: flex;
-  flex-direction: column;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
+.status {
+  color: red;
+}
+
+.status.completed {
+  color: green;
 }

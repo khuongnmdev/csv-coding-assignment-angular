@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { BackendService, Task, User } from '../backend.service';
-import { EMPTY, Observable, iif } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { map, shareReplay, switchMap, switchMapTo, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { first, shareReplay, switchMap } from 'rxjs/operators';
+import { BackendService, Task, User } from '../backend.service';
 
 export const TASK_ID_PARAM_KEY = 'taskId';
 
@@ -13,49 +15,61 @@ export const TASK_ID_PARAM_KEY = 'taskId';
 })
 export class TaskDetailComponent implements OnInit {
 
-  /** User to display. */
-  protected readonly task$: Observable<Task>;
-  protected readonly user$: Observable<User>;
-  protected readonly userList$: Observable<User[]>;
+  protected task: Task;
 
   private taskId: number;
 
+  public readonly form: FormGroup;
+
+  protected isLoaded$ = new BehaviorSubject<boolean>(false);
+
+  protected readonly users$: Observable<User[]>;
+
   constructor(
     activatedRoute: ActivatedRoute,
-    private backend: BackendService
+    private readonly backend: BackendService,
+    private readonly fb: FormBuilder,
+    private snackBar: MatSnackBar
+
   ) {
     this.taskId = Number(activatedRoute.snapshot.paramMap.get(TASK_ID_PARAM_KEY));
-    this.task$ = this.backend.task(this.taskId).pipe(
+
+    this.users$ = this.backend.users().pipe(
       shareReplay({ refCount: true, bufferSize: 1 }),
     );
 
-    this.user$ = this.task$.pipe(switchMap(task => iif(() => task.assigneeId !== null,
-      this.backend.user(Number(task.assigneeId),
-      ))))
-
-    this.userList$ = this.backend.users().pipe(
-      tap((users) => console.log(users)),
-      shareReplay({ refCount: true, bufferSize: 1 }),
-    );
+    this.form = this.initForm();
 
   }
 
   ngOnInit() {
+    this.backend.task(this.taskId).pipe(
+      first(),
+    ).subscribe((value) => {
+      if (value) {
+        this.form.patchValue(value);
+        this.isLoaded$.next(true);
+      }
+    }
+    );
   }
 
-  assignTask(userId: number) {
-
-    this.task$.pipe(
-      map(value => {
-        return { ...value, userId: userId }
-      }),
+  updateTask() {
+    of(this.form.value).pipe(
       switchMap((payload) => {
         return this.backend.update(this.taskId, payload);
       })
-
-    ).subscribe(
-      // () => console.log('Assign success!');
-    )
+    ).subscribe(() => {
+      this.snackBar.open("Updated new value!")
+    })
   }
 
+  private initForm(): FormGroup {
+    return this.fb.group({
+      id: [0],
+      description: ['', [Validators.required]],
+      assigneeId: ['', [Validators.required]],
+      completed: [false, Validators.required],
+    });
+  }
 }

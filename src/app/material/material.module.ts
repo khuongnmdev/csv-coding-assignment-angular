@@ -6,19 +6,23 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 const EXPORTED_MODULES = [
   MatCardModule,
   MatFormFieldModule,
   MatInputModule,
   MatButtonModule,
-  MatSelectModule
+  MatSelectModule,
+  MatCheckboxModule,
+  MatSnackBarModule
 ]
 
 @NgModule({
   imports: [
     CommonModule,
   ],
-  exports: [...EXPORTED_MODULES]
+  exports: [...EXPORTED_MODULES],
 })
 export class MaterialModule { }

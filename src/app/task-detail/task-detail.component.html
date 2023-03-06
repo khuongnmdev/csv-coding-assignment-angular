@@ -1,51 +1,36 @@
 <h2 class="title">Task Detail</h2>
+<button mat-button color="primary" routerLink="/">Back Task List</button>
 
-<a routerLink="/">Go to Task List</a>
-
-<ng-container *ngIf="task$ | async as task; else notFoundTask">
-  <form (submit)="updateTask()" class="form">
-    <h2>Task Id: {{ task.id }}</h2>
-
-    <mat-form-field appearance="fill">
+<ng-container *ngIf="isLoaded$ | async as task; else notFoundTask">
+  <form (submit)="updateTask()" class="form" [formGroup]="form">
+    <mat-form-field>
       <mat-label>Description</mat-label>
       <input
         matInput
         type="text"
-        [(ngModel)]="task.description"
+        formControlName="description"
         name="description"
       />
     </mat-form-field>
-    <mat-form-field
-      appearance="fill"
-      *ngIf="user$ | async as user; else notFoundUser"
-    >
-      <mat-label>Assignee</mat-label>
-      <mat-select
-        [ngModel]="task.assignee"
-        name="assignee"
-        (ngModelChange)="(assignTask)"
-      >
-        <!-- <mat-option value="disabled">Option 1</mat-option> -->
-        <ng-container *ngIf="userList$ | async as userList">
-          <mat-option *ngFor="let user of userList" [value]="user.value">
-            {{ user.name }}
-          </mat-option>
-        </ng-container>
+
+    <mat-form-field *ngIf="users$ | async as users">
+      <mat-label>Select an user</mat-label>
+      <mat-select formControlName="assigneeId">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let option of users" [value]="option.id">
+          {{ option.name }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
 
-    Assignee:
-    <ng-container *ngIf="user$ | async as user; else notFoundUser">
-      <span>{{ user.name }}</span>
-    </ng-container>
+    <mat-checkbox color="primary" formControlName="completed" name="completed">
+      Completed
+    </mat-checkbox>
 
-    <p>Status: {{ task.completed ? "Done" : "Incomplete" }}</p>
+    <button type="submit" mat-raised-button color="warn">Save</button>
   </form>
 </ng-container>
 
 <ng-template #notFoundTask>
   <p>This task is not existed.</p>
-</ng-template>
-<ng-template #notFoundUser>
-  <span>Not assign yet.</span>
 </ng-template>

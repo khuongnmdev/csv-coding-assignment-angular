@@ -1,14 +1,36 @@
 <h2 class="title">Task List</h2>
 
-<section class="task-list">
-  <ng-container *ngFor="let task of tasks$ | async as tasks">
+<div class="filter">
+  <mat-form-field *ngIf="users$ | async as users">
+    <mat-label>Filter by user</mat-label>
+    <mat-select
+      [ngModel]="filterValue"
+      name="filter"
+      (ngModelChange)="filterChange($event)"
+    >
+      <mat-option>All</mat-option>
+      <mat-option *ngFor="let option of users" [value]="option.id">
+        {{ option.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<ng-container
+  *ngFor="let task of tasks$ | async as tasks; trackBy: trackByFunction"
+>
+  <div class="task-list">
     <mat-card class="task-list-item" routerLink="detail/{{ task.id }}">
       <mat-card-title>Task {{ task.id }}</mat-card-title>
-      <mat-card-subtitle>{{ task.description }}</mat-card-subtitle>
+      <mat-card-content>
+        <h4>{{ task.description }}</h4>
+        <h4 class="status" [ngClass]="task.completed ? 'completed' : ''">
+          {{ task.completed ? "Done" : "Incomplete" }}
+        </h4>
+      </mat-card-content>
     </mat-card>
-  </ng-container>
-</section>
-
+  </div>
+</ng-container>
 
 <form (submit)="addNewTask()" class="form">
   <h3 class="title">New Task</h3>
