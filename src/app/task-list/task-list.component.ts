@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, finalize, map, repeatWhen, shareReplay, tap } from 'rxjs/operators';
+import { Component } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { map, repeatWhen } from 'rxjs/operators';
 import { BackendService, Task, User } from '../backend.service';
 
 @Component({
@@ -8,7 +8,7 @@ import { BackendService, Task, User } from '../backend.service';
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.css']
 })
-export class TaskListComponent implements OnInit {
+export class TaskListComponent {
 
   protected readonly tasks$: Observable<Task[]>;
 
@@ -29,13 +29,9 @@ export class TaskListComponent implements OnInit {
           return tasks;
         }
       }),
-      repeatWhen(() => this.userUpdated$), // Deprecated operator
+      repeatWhen(() => this.userUpdated$), // Deprecated operator but still work on this version
     )
     this.users$ = this.backend.users();
-  }
-
-  ngOnInit() {
-    this.userUpdated$.next();
   }
 
   getAssigneeName(assigneeId: number) {
